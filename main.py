@@ -1,4 +1,3 @@
-
 # Bibliotecas
 import random
 import pygame
@@ -10,6 +9,7 @@ som_botao = pygame.mixer.Sound("botão.wav")
 sucesso = pygame.mixer.Sound("sucesso.wav")
 fail = pygame.mixer.Sound("fail.wav")
 som_tecla.set_volume(random.uniform(0.15, 0.20))
+fail.set_volume(0.20)
 
 # ------------------- CONFIG -----------------------
 pygame.init()
@@ -34,6 +34,7 @@ AZUL_CLARO = (0, 191, 255)
 TURQUOISE = (64, 224, 208)
 AZUL_ROYAL = (65, 105, 225)
 LIMA = (0, 255, 0)
+
 # ------------------------------------------- Alternativas base ------------------------------------------------------
 opcao_1 = 'texto base'
 opcao_2 = 'texto base'
@@ -50,7 +51,10 @@ moedas_obtidas = 0
 ativar_random = True
 total_moedas = 0
 pula_pergunta = False
+contagem = False
 alternativa_correta = 'texto base'
+contagem_perguntas = 1
+erros = 0
 
 # ---------------------------------------- Sistema de botões clicáveis -------------------------------------------------
 pos_mouse = pygame.mouse.get_pos()
@@ -442,6 +446,257 @@ def pergunta_11(): #pergunta sobre comentários
         botao_pular_desativado.desenhar(tela)
         pygame.draw.rect(tela, BRANCO, caixa_pular, 5)
 
+def pergunta_12(): # pergunta sobre o trecho de código "type"
+    global opcao_1, opcao_2, opcao_3, opcao_4, opcoes
+    global alternativa_correta, enunciado
+
+    enunciado = ["  Em python, números podem ser interpretados como texto",
+                 "  erroneamente, causando confusão no fluxo do programa.",
+                 "  o código 'type' retorna o tipo daquela variável,",
+                 "  facilitando o entendimento do código.",
+                 "  ",
+                 "  O que o trecho de código type(10) retorna?"]
+
+    opcao_1 = '"int"'
+    opcao_2 = '<int>'
+    opcao_3 = 'int'
+    opcao_4 = 'integer'
+
+    alternativa_correta = 'int'
+    aleatorizar_alternativas()
+    botao_mostrar_moedas.desenhar(tela)
+    pygame.draw.rect(tela, BRANCO, caixa_moedas, 5)
+
+    if total_moedas >= 100:
+        botao_pular_ativado.desenhar(tela)
+        pygame.draw.rect(tela, BRANCO, caixa_pular, 5)
+    else:
+        botao_pular_desativado.desenhar(tela)
+        pygame.draw.rect(tela, BRANCO, caixa_pular, 5)
+
+def pergunta_13(): #pergunta sobre estruturas de repetição:
+    global opcao_1, opcao_2, opcao_3, opcao_4, opcoes
+    global alternativa_correta, enunciado
+
+    enunciado = ["  Estruturas de repetição podem gerar confusão pela ",
+                 "  forma como são interpretadas pelo programa em cada",
+                 "  linguagem de programação, confundindo com certa",
+                 "  frequência programadores e analistas novatos.",
+                 "  ",
+                 "  Qual dessas opções cria um loop infinito?"]
+
+    opcao_1 = 'for i in range(10):'
+    opcao_2 = 'while True:'
+    opcao_3 = 'loop forever:'
+    opcao_4 = 'repeat infinite:'
+
+    alternativa_correta = 'while True:'
+    aleatorizar_alternativas()
+    botao_mostrar_moedas.desenhar(tela)
+    pygame.draw.rect(tela, BRANCO, caixa_moedas, 5)
+
+    if total_moedas >= 100:
+        botao_pular_ativado.desenhar(tela)
+        pygame.draw.rect(tela, BRANCO, caixa_pular, 5)
+    else:
+        botao_pular_desativado.desenhar(tela)
+        pygame.draw.rect(tela, BRANCO, caixa_pular, 5)
+
+def pergunta_14():
+    global opcao_1, opcao_2, opcao_3, opcao_4, opcoes
+    global alternativa_correta, enunciado
+
+    enunciado = ["  Saber como utilizar as ferramentas disponíveis",
+                 "  do python é extremamente importante para dominar",
+                 "  a linguagem. uma dessas ferramentas tem o nome",
+                 "  'range'.",
+                 "  ",
+                 "  O que a função range(1, 5) retorna?"]
+
+    opcao_1 = '[1, 2, 3, 4]'
+    opcao_2 = '[1, 2, 3, 4, 5]'
+    opcao_3 = '[0, 1, 2, 3, 4]'
+    opcao_4 = '[1, 5]'
+
+    alternativa_correta = '[1, 2, 3, 4]'
+    aleatorizar_alternativas()
+    botao_mostrar_moedas.desenhar(tela)
+    pygame.draw.rect(tela, BRANCO, caixa_moedas, 5)
+
+    if total_moedas >= 100:
+        botao_pular_ativado.desenhar(tela)
+        pygame.draw.rect(tela, BRANCO, caixa_pular, 5)
+    else:
+        botao_pular_desativado.desenhar(tela)
+        pygame.draw.rect(tela, BRANCO, caixa_pular, 5)
+
+def pergunta_15():
+    global opcao_1, opcao_2, opcao_3, opcao_4, opcoes
+    global alternativa_correta, enunciado
+
+    enunciado = ["  Após criar e formatar uma lista em python, pode ser",
+                 "  uma tarefa desafiadora editar os elementos dentro dela.",
+                 "  Existem diversas formas de se alterar uma lista já pronta",
+                 "  em python, e uma dessas formas é o método .pop()",
+                 "  ",
+                 "  O que o método .pop() faz?"]
+
+    opcao_1 = 'Remove o último item da lista.'
+    opcao_2 = 'Adiciona um item no primeiro espaço da lista.'
+    opcao_3 = 'Ordena a lista do menor para o maior.'
+    opcao_4 = 'Duplica a lista, criando outro array'
+
+    alternativa_correta = 'Remove o último item da lista.'
+    aleatorizar_alternativas()
+    botao_mostrar_moedas.desenhar(tela)
+    pygame.draw.rect(tela, BRANCO, caixa_moedas, 5)
+
+    if total_moedas >= 100:
+        botao_pular_ativado.desenhar(tela)
+        pygame.draw.rect(tela, BRANCO, caixa_pular, 5)
+    else:
+        botao_pular_desativado.desenhar(tela)
+        pygame.draw.rect(tela, BRANCO, caixa_pular, 5)
+
+def pergunta_16(): #pergunta sobre o operador %
+    global opcao_1, opcao_2, opcao_3, opcao_4, opcoes
+    global alternativa_correta, enunciado
+
+    enunciado = ["  Os operadores da aritmética padrão podem mudar de função",
+                 "  de acordo com a linguagem de programação, sendo necessário",
+                 "  cuidado para utiliza-los em uma linguagem nova.",
+                 "  ",
+                 "  Um desses operadores é o '%'. ",
+                 "  Qual a função desse operador em python?"]
+
+    opcao_1 = 'Indicar o resto da divisão.'
+    opcao_2 = 'Retornar porcentagem de uma variável.'
+    opcao_3 = 'Indica a divisão.'
+    opcao_4 = 'Indica a multiplicação.'
+
+    alternativa_correta = 'Indicar o resto da divisão.'
+    aleatorizar_alternativas()
+    botao_mostrar_moedas.desenhar(tela)
+    pygame.draw.rect(tela, BRANCO, caixa_moedas, 5)
+
+    if total_moedas >= 100:
+        botao_pular_ativado.desenhar(tela)
+        pygame.draw.rect(tela, BRANCO, caixa_pular, 5)
+    else:
+        botao_pular_desativado.desenhar(tela)
+        pygame.draw.rect(tela, BRANCO, caixa_pular, 5)
+
+def pergunta_17(): #pergunta sobre o código "Len"
+    global opcao_1, opcao_2, opcao_3, opcao_4, opcoes
+    global alternativa_correta, enunciado
+
+    enunciado = ["  O código 'len' em python tem como função retornar",
+                 "  quantos caracteres são ocupados por aquele bloco",
+                 "  de código.",
+                 "  ",
+                 "  ",
+                 "  O que o código len(' Python ') retorna?"]
+
+    opcao_1 = '6'
+    opcao_2 = '8'
+    opcao_3 = '7'
+    opcao_4 = 'Erro'
+
+    alternativa_correta = '8'
+    aleatorizar_alternativas()
+    botao_mostrar_moedas.desenhar(tela)
+    pygame.draw.rect(tela, BRANCO, caixa_moedas, 5)
+
+    if total_moedas >= 100:
+        botao_pular_ativado.desenhar(tela)
+        pygame.draw.rect(tela, BRANCO, caixa_pular, 5)
+    else:
+        botao_pular_desativado.desenhar(tela)
+        pygame.draw.rect(tela, BRANCO, caixa_pular, 5)
+
+def pergunta_18(): #pergunta sobre impressão na tela
+    global opcao_1, opcao_2, opcao_3, opcao_4, opcoes
+    global alternativa_correta, enunciado
+
+    enunciado = ["  Diferentes comandos para a entrada de dados são",
+                 "  utilizados, variando juntamente com as linguagens",
+                 "  de programação.",
+                 "  ",
+                 "  ",
+                 "  Qual comando é usado para imprimir algo na tela em python?"]
+
+    opcao_1 = 'printf()'
+    opcao_2 = 'cout << '
+    opcao_3 = 'print()'
+    opcao_4 = 'write()'
+
+    alternativa_correta = 'print()'
+    aleatorizar_alternativas()
+    botao_mostrar_moedas.desenhar(tela)
+    pygame.draw.rect(tela, BRANCO, caixa_moedas, 5)
+
+    if total_moedas >= 100:
+        botao_pular_ativado.desenhar(tela)
+        pygame.draw.rect(tela, BRANCO, caixa_pular, 5)
+    else:
+        botao_pular_desativado.desenhar(tela)
+        pygame.draw.rect(tela, BRANCO, caixa_pular, 5)
+
+def pergunta_19(): # pergunta sobre operadores lógicos
+    global opcao_1, opcao_2, opcao_3, opcao_4, opcoes
+    global alternativa_correta, enunciado
+
+    enunciado = ["  Na linguagem python, existem diferenças que surgem quando",
+                 "  se utilizam dois operadores em sequencia, por exemplo:",
+                 "  o operador '*' indica multiplicação, mas o operador '**' ",
+                 "  indica uma potência.",
+                 "  ",
+                 "  Qual a diferença entre '=' e '==' em python?"]
+
+    opcao_1 = 'O operador "==" indica igualdade, enquanto o "=" indica atribuição de valor.'
+    opcao_2 = 'Ambos os operadores realizam a mesma função, mas o "==" é mais recomendado.'
+    opcao_3 = 'O operador "=" indica igualdade, enquanto o "==" indica atribuição de valor.'
+    opcao_4 = 'Nenhuma das alternativas anteriores.'
+
+    alternativa_correta = 'O operador "==" indica igualdade, enquanto o "=" indica atribuição de valor.'
+    aleatorizar_alternativas()
+    botao_mostrar_moedas.desenhar(tela)
+    pygame.draw.rect(tela, BRANCO, caixa_moedas, 5)
+
+    if total_moedas >= 100:
+        botao_pular_ativado.desenhar(tela)
+        pygame.draw.rect(tela, BRANCO, caixa_pular, 5)
+    else:
+        botao_pular_desativado.desenhar(tela)
+        pygame.draw.rect(tela, BRANCO, caixa_pular, 5)
+
+def pergunta_20():#pergunta sobre declaração de variáveis
+    global opcao_1, opcao_2, opcao_3, opcao_4, opcoes
+    global alternativa_correta, enunciado
+
+    enunciado = ["  O python é uma linguagem que não necessita da declaração",
+                 "  de variáveis no começo do programa, possibilitando a declaração",
+                 "  dentro da função principal. Isso ocorre pois o python mescla",
+                 "  as fases de compilação e execução para um melhor desempenho.",
+                 "  ",
+                 "  Qual a forma de se declarar variáveis em python?"]
+
+    opcao_1 = 'x = 10, apenas no ínicio da função principal.'
+    opcao_2 = 'x = 10 em qualquer ponto do código.'
+    opcao_3 = 'int x = 10 em qualquer ponto do código.'
+    opcao_4 = 'var x = 10 antes da função principal.'
+
+    alternativa_correta = 'x = 10 em qualquer ponto do código.'
+    aleatorizar_alternativas()
+    botao_mostrar_moedas.desenhar(tela)
+    pygame.draw.rect(tela, BRANCO, caixa_moedas, 5)
+
+    if total_moedas >= 100:
+        botao_pular_ativado.desenhar(tela)
+        pygame.draw.rect(tela, BRANCO, caixa_pular, 5)
+    else:
+        botao_pular_desativado.desenhar(tela)
+        pygame.draw.rect(tela, BRANCO, caixa_pular, 5)
 # -------------------------------------------------------- Respostas -------------------------------------------------
 
 def resposta():
@@ -558,9 +813,9 @@ botao_mostrar_moedas = Naobutton(porcentagem_horizontal * 5, porcentagem_vertica
                                  porcentagem_horizontal * 25, porcentagem_vertical * 5, f"Moedas: {total_moedas}")
 
 # ------------------------- Botões e caixas auxiliares -------------------------------------------------------------
-botao_ok = Button(porcentagem_horizontal * 50, porcentagem_vertical * 40, porcentagem_horizontal * 8, porcentagem_vertical * 6, "OK")
-botao_sair_transicao = Button (porcentagem_horizontal * 40, porcentagem_vertical * 40, porcentagem_horizontal * 8, porcentagem_vertical * 6, "Sair")
-caixa_transicao = pygame.Rect(porcentagem_horizontal * 39, porcentagem_vertical * 18, porcentagem_horizontal * 20, porcentagem_vertical * 30)
+botao_ok = Button(porcentagem_horizontal * 50, porcentagem_vertical * 33, porcentagem_horizontal * 8, porcentagem_vertical * 6, "OK")
+botao_sair_transicao = Button (porcentagem_horizontal * 40, porcentagem_vertical * 33, porcentagem_horizontal * 8, porcentagem_vertical * 6, "Sair")
+caixa_transicao = pygame.Rect(porcentagem_horizontal * 39, porcentagem_vertical * 10, porcentagem_horizontal * 20, porcentagem_vertical * 30)
 botao_sim = Button(porcentagem_horizontal * 55, porcentagem_vertical * 25, porcentagem_horizontal * 8, porcentagem_vertical * 5, "Sim")
 botao_nao = Button(porcentagem_horizontal * 35, porcentagem_vertical * 25, porcentagem_horizontal * 8, porcentagem_vertical * 5, "Não")
 caixa = pygame.Rect(50, 420, 700, 150)
@@ -578,7 +833,17 @@ perguntas = ["quiz_pergunta_1",
              "quiz_pergunta_8",
              "quiz_pergunta_9",
              "quiz_pergunta_10",
-             "quiz_pergunta_11"]
+             "quiz_pergunta_11",
+             "quiz_pergunta_12",
+             "quiz_pergunta_13",
+             "quiz_pergunta_14",
+             "quiz_pergunta_15",
+             "quiz_pergunta_16",
+             "quiz_pergunta_17",
+             "quiz_pergunta_18",
+             "quiz_pergunta_19",
+             "quiz_pergunta_20"]
+
 indice_perguntas = 0
 random.shuffle(perguntas)
 
@@ -586,7 +851,7 @@ random.shuffle(perguntas)
 
 loop = 1
 
-# ------------------------- LOOP PRINCIPAL DO PROGRAMA ---------------------------------------
+# -------------------------------- Loop principal do programa -------------------------------------------------------
 while loop != 0:
     tela.fill(PRETO)
 
@@ -611,8 +876,12 @@ while loop != 0:
                 sys.exit()
 
             if botao_iniciar.clicado(pos_mouse):
-                som_botao.play()
-                estado = 'tutorial'
+                if estado_anterior == "numero_questao":
+                    som_botao.play()
+                    estado = 'numero_questao'
+                if estado_anterior != "numero_questao":
+                    som_botao.play()
+                    estado = 'tutorial'
 #----------------------------------- Tutorial --------------------------------------------
 
         elif estado == 'tutorial':
@@ -655,6 +924,21 @@ while loop != 0:
                 if botao_nao.clicado(pos_mouse):
                     som_botao.play()
                     estado = "menu"
+
+# ------------------------------------- Final ---------------------------------------------------------
+
+        elif estado == "final":
+            if botao_avancar.clicado(pos_mouse):
+                som_botao.play()
+                pontuacao = 0
+                indice_perguntas = 0
+                total_moedas = 0
+                botao_mostrar_moedas = Naobutton(porcentagem_horizontal * 5, porcentagem_vertical * 90,
+                                                 porcentagem_horizontal * 25, porcentagem_vertical * 5,
+                                                 f"Moedas: {total_moedas}")
+                random.shuffle(perguntas)
+                estado = "menu"
+
 #------------------------------------ PULAR ------------------------------------------------
 
         elif estado == 'pular':
@@ -675,26 +959,33 @@ while loop != 0:
         elif estado == 'status_pular':
             if botao_avancar.clicado(pos_mouse):
                 som_botao.play()
+                contagem = True
                 estado = "numero_questao"
 
 #------------------------------ RESPOSTA CERTA ---------------------------------------------
         elif estado == "certa_resposta":
             if botao_avancar.clicado(pos_mouse):
+                contagem = True
                 som_botao.play()
                 estado = "numero_questao"
                 recompensa = True
 #------------------------------ RESPOSTA ERRADA ---------------------------------------------
         elif estado == "resposta_errada":
             if botao_avancar.clicado(pos_mouse):
+                contagem = True
                 som_botao.play()
                 estado = "numero_questao"
+                recompensa = True
 #-------------------------------TRANSIÇÃO QUESTÕES ------------------------------------------
         elif estado == "numero_questao":
             if botao_ok.clicado(pos_mouse):
                 som_botao.play()
                 if not pula_pergunta:
                     indice_perguntas +=1
-                    estado = perguntas[indice_perguntas]
+                    if indice_perguntas == 20:
+                        estado = "final"
+                    elif indice_perguntas < 20:
+                        estado = perguntas[indice_perguntas]
                 if pula_pergunta:
                     pula_pergunta = False
                     estado = perguntas[indice_perguntas]
@@ -734,6 +1025,33 @@ while loop != 0:
             resposta()
 
         elif estado == "quiz_pergunta_11":
+            resposta()
+
+        elif estado == "quiz_pergunta_12":
+            resposta()
+
+        elif estado == "quiz_pergunta_13":
+            resposta()
+
+        elif estado == "quiz_pergunta_14":
+            resposta()
+
+        elif estado == "quiz_pergunta_15":
+            resposta()
+
+        elif estado == "quiz_pergunta_16":
+            resposta()
+
+        elif estado == "quiz_pergunta_17":
+            resposta()
+
+        elif estado == "quiz_pergunta_18":
+            resposta()
+
+        elif estado == "quiz_pergunta_19":
+            resposta()
+
+        elif estado == "quiz_pergunta_20":
             resposta()
 #-------------------------------------------- DESENHO ---------------------------------------------------------------
 
@@ -899,15 +1217,25 @@ while loop != 0:
         texto = fonte.render(f"Sua pontuação é: {pontuacao}", True, AZUL)
         tela.blit(texto, (porcentagem_horizontal * 9, porcentagem_vertical * 58))
 
-        texto = fonte.render(f"Moedas obtidas: {moedas_obtidas}", True, AZUL)
+        texto = fonte.render(f"Moedas perdidas: {moedas_obtidas}", True, AZUL)
         tela.blit(texto, (porcentagem_horizontal * 9, porcentagem_vertical * 65))
 
         texto = fonte.render(f"Moedas totais: {total_moedas}", True, AZUL)
         tela.blit(texto, (porcentagem_horizontal * 9, porcentagem_vertical * 72))
 
+
+        if recompensa:
+
+            erros +=1
+            total_moedas = total_moedas - moedas_obtidas
+            recompensa = False
+
+
         botao_mostrar_moedas = Naobutton(porcentagem_horizontal * 5, porcentagem_vertical * 90,
                                          porcentagem_horizontal * 25, porcentagem_vertical * 5,
                                          f"Moedas: {total_moedas}")
+
+
 
         botao_avancar.desenhar(tela)
 
@@ -915,11 +1243,15 @@ while loop != 0:
 
     elif estado == "numero_questao":
 
+        if contagem:
+            contagem_perguntas += 1
+            contagem = False
+
         pygame.draw.rect(tela, PRETO, caixa_transicao)
         pygame.draw.rect(tela, BRANCO, caixa_transicao, 3)
 
-        texto = fonte.render(f"Questão: {indice_perguntas + 1}", True, AZUL)
-        tela.blit(texto, (porcentagem_horizontal * 43, porcentagem_vertical * 20))
+        texto = fonte.render(f"Questão: {contagem_perguntas}", True, AZUL)
+        tela.blit(texto, (porcentagem_horizontal * 43, porcentagem_vertical * 12))
 
         botao_ok.desenhar(tela)
         botao_sair_transicao.desenhar(tela)
@@ -959,6 +1291,71 @@ while loop != 0:
     elif estado == "quiz_pergunta_11":
         pergunta_11()
 
+    elif estado == "quiz_pergunta_12":
+        pergunta_12()
+
+    elif estado == "quiz_pergunta_13":
+        pergunta_13()
+
+    elif estado == "quiz_pergunta_14":
+        pergunta_14()
+
+    elif estado == "quiz_pergunta_15":
+        pergunta_15()
+
+    elif estado == "quiz_pergunta_16":
+        pergunta_16()
+
+    elif estado == "quiz_pergunta_17":
+        pergunta_17()
+
+    elif estado == "quiz_pergunta_18":
+        pergunta_18()
+
+    elif estado == "quiz_pergunta_19":
+        pergunta_19()
+
+    elif estado == "quiz_pergunta_20":
+        pergunta_20()
+
+
+# ------------------------------------------- Final do Quiz ---------------------------------------------------------
+
+    elif estado == "final":
+
+        if pontuacao < 20:
+            texto = fonte.render("Parabéns, você concluiu o quiz!",True, BRANCO)
+            tela.blit(texto, (porcentagem_horizontal * 30, porcentagem_vertical * 10))
+
+            texto = fonte.render("Espero que você tenha aproveitado a experiencia e que eu tenha", True, BRANCO)
+            tela.blit(texto, (porcentagem_horizontal * 12, porcentagem_vertical * 20))
+
+            texto = fonte.render("ajudado no seu desenvolvimento, muito obrigado e até a proxima!", True, BRANCO)
+            tela.blit(texto, (porcentagem_horizontal * 12, porcentagem_vertical * 30))
+
+        if pontuacao == 20:
+            texto = fonte.render("Parabéns, você concluiu o quiz com pontuação perfeita!", True, BRANCO)
+            tela.blit(texto, (porcentagem_horizontal * 17, porcentagem_vertical * 10))
+
+            texto = fonte.render("Simplesmente incrível, você alcançou um excelente feito!", True, BRANCO)
+            tela.blit(texto, (porcentagem_horizontal * 17, porcentagem_vertical * 20))
+
+            texto = fonte.render("espero ter ajudado no seu desenvolvimento, muito obrigado e até a proxima!", True, BRANCO)
+            tela.blit(texto, (porcentagem_horizontal * 8, porcentagem_vertical * 30))
+
+        pygame.draw.rect(tela, PRETO, caixa_info)
+        pygame.draw.rect(tela, BRANCO, caixa_info, 3)
+
+        texto = fonte.render(f"Sua pontuação foi: {pontuacao}", True, AZUL)
+        tela.blit(texto, (porcentagem_horizontal * 9, porcentagem_vertical * 58))
+
+        texto = fonte.render(f"Questões erradas: {erros}", True, AZUL)
+        tela.blit(texto, (porcentagem_horizontal * 9, porcentagem_vertical * 65))
+
+        texto = fonte.render(f"Total de moedas restantes: {total_moedas}", True, AZUL)
+        tela.blit(texto, (porcentagem_horizontal * 9, porcentagem_vertical * 72))
+
+        botao_avancar.desenhar(tela)
 
     pygame.display.flip()
 pygame.quit()

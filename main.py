@@ -4,7 +4,7 @@ import time
 import pygame
 
 pygame.mixer.init()
-som_tecla = pygame.mixer.Sound("tecla1.wav")
+som_tecla = pygame.mixer.Sound("Botao.wav")
 som_tecla.set_volume(random.uniform(0.15, 0.20))
 
 #Controle Mouse

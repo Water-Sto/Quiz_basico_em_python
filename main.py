@@ -2,10 +2,47 @@
 import random
 import time
 import pygame
+
 pygame.mixer.init()
 som_tecla = pygame.mixer.Sound("tecla1.wav")
 som_tecla.set_volume(random.uniform(0.15, 0.20))
-som_tecla.play()
+
+#Controle Mouse
+pygame.init()
+tela = pygame.display.set_mode((800, 600))
+pygame.display.set_caption("Botão em Pygame")
+mostrar_menu = True
+
+class Button:
+    def __init__(self, x, y, largura, altura, texto, fontes):
+        self.rect = pygame.Rect(x, y, largura, altura)
+        self.texto = texto
+        self.fontes = fontes
+        self.cor_normal = (70, 70, 70)
+        self.cor_ativa = (100, 170, 255)
+
+    def desenhar(self, telas):
+        mouses = pygame.mouse.get_pos()
+
+        if self.rect.collidepoint(mouses):
+            cor = self.cor_ativa
+        else:
+            cor = self.cor_normal
+        pygame.draw.rect(telas, cor, self.rect)
+
+        texto_renderizar = self.fontes.render(self.texto, True, (255, 255, 255))
+        texto_rect   = texto_renderizar.get_rect(center = self.rect.center)
+
+        telas.blit(texto_renderizar, texto_rect)
+
+    def clicado(self, eventos):
+
+        if eventos.type == pygame.MOUSEBUTTONDOWN:
+            if self.rect.collidepoint(eventos.pos):
+                return True
+
+        return False
+
 
 #Variavel de contagem de pontos
 contagem_pontos = 0
@@ -44,7 +81,7 @@ def alternativas():
 #Variaveis da função
 #repeat define uma letra de "A" até "E" para a questão;
 #correct tem duas utilidades, primeiro a variável indica a letra da questão
-#depois ela de torna a alternativa correta da questão.
+#depois ela se torna a alternativa correta da questão.
 
     repeat = 0
     correct = ["A:", "B:", "C:", "D:", "E:"]
@@ -282,55 +319,60 @@ def questao4():
         time.sleep(1.53)
 
 
-
+dialogos = [
+    "Esse Quiz é o resultado de um trabalho do 2° semestre do curso de ",
+    "Análise e desenvolvimento de sistemas na faculdade Estácio, feito",
+    "Utilizando a linguagem python.",
+    "O Objetivo é utilizar todo o conteúdo disponível no SAVA da matéria ",
+    "Paradigmas de linguagens de programação em python para elaborar ",
+    "perguntas para um Quiz, utilizando o aprendizado na prática.",
+    "Cada questão deve conter 5 alternativas, com apenas uma correta."
+]
 
 #Inicio do programa
+
 teclar("\n\n\n\n\n\n\n\n\n\n\n\n\n\n--- Bem vindo ao Quiz da matéria paradigmas de linguagem em python! ---")
 
+fonte = pygame.font.SysFont(None, 40)
+botao_titulo = Button(230, 10, 320, 50, "Quiz Basico em Python", fonte)
+botao_iniciar = Button(300, 300, 180, 50, "Iniciar", fonte)
+botao_informacao = Button(300, 400, 180, 50, "Informações", fonte)
+botao_sair = Button(300, 500, 180, 50, "Sair", fonte)
+
+caixa = pygame.Rect(50, 420, 700, 150)
+
 while loop != 0:
-#Opções de segmento de código
-    print("1 - Entrar no Quiz")
-    print("2 - Informações")
-    print("0 - Sair")
-
-#Entrada da opção
-    opcao = int(input("Selecione a opção desejada: "))
-    match opcao:
-
-#Caminho padrão do programa, segmento do Quiz
-        case 1:
-            print()
-            lista_perguntas = [questao1, questao2, questao3, questao4]
-            random.shuffle(lista_perguntas)
-            for f in lista_perguntas:
-                print("Questão", numero_pergunta +1, end = ') ')
-                numero_pergunta += 1
-                f()
-            teclar("\nParabéns, você chegou ao final do Quiz!\nEssa mensagem não deveria estar aqui nesse momento, porém, o quiz está incompleto, peço desculpas pelo inconveniente.\nEspero ve-lo novamente em breve, quando o quiz estiver completo!")
+    mouse = pygame.mouse.get_pos()
+    for evento in pygame.event.get():
+        if evento.type == pygame.QUIT:
             loop = 0
 
-
-#Mais informações sobre o programa e a sua criação
-        case 2:
-            print()
-            teclar("Esse Quiz é o resultado de um trabalho do 2° semestre do curso de ")
-            teclar("Análise e desenvolvimento de sistemas na faculdade Estácio, feito ")
-            teclar("Utilizando a linguagem python.")
-            print()
-            teclar("O Objetivo é utilizar todo o conteúdo disponível no SAVA da matéria ")
-            teclar("Paradigmas de linguagens de programação em python para elaborar ")
-            teclar("perguntas para um Quiz, utilizando o aprendizado na prática.")
-            teclar("Cada questão deve conter 5 alternativas, com apenas uma correta.")
-            print()
-#Saida do programa
-        case 0:
-            print()
-            print("Sua pontuação dessa vez foi:", contagem_pontos)
-            teclar("Obrigado pela sua participação, até a próxima!")
+        if botao_sair.clicado(evento):
             loop = 0
 
-#Entrada não esperada
-        case default:
-            print("Entrada não identificada, tente novamente.")
+        if botao_informacao.clicado(evento):
+            mostrar_menu = False
+
+            pygame.draw.rect(tela, (0, 0, 0), caixa)
+            pygame.draw.rect(tela, (255, 255, 255), caixa, 3)
+
+            texto_render = fonte.render(dialogos[2], True, (255, 255, 255))
+            tela.blit(texto_render,(caixa.x+20, caixa.y+20))
+            pygame.display.update()
+            time.sleep(3)
+            tela.fill((0, 0, 0))
+            mostrar_menu = True
+            pygame.display.update()
+
+
+        if mostrar_menu:
+            botao_titulo.desenhar(tela)
+            botao_iniciar.desenhar(tela)
+            botao_informacao.desenhar(tela)
+            botao_sair.desenhar(tela)
+
+    pygame.display.update()
+
+pygame.quit()
 
 

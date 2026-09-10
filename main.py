@@ -10,6 +10,8 @@ som_tecla.play()
 #Variavel de contagem de pontos
 contagem_pontos = 0
 total_pontos = contagem_pontos
+
+#Variavel que controla o numero da pergunta
 numero_pergunta = 0
 
 #Controla o sistema para permitir o reset sem fechar o cmd
@@ -18,30 +20,30 @@ loop = 1
 #Variaveis globais
 
 #Define qual a resposta certa em cada alternativa
-resposta_certa = "textobase"
+resposta_certa = "texto base"
 
-#Identica a variavel anterior, mas para letras minusculas
-minusculo = "textobase"
+#Identica a variável anterior, mas para letras minúsculas
+minusculo = "texto base"
 
-#Define qual será a pergunta daquela letra em questão (Variaveis Globais)
-A = "textobase"
-B = "textobase"
-C = "textobase"
-D = "textobase"
-E = "textobase"
+#Define qual será a pergunta daquela letra em questão (Variáveis Globais)
+A = "texto base"
+B = "texto base"
+C = "texto base"
+D = "texto base"
+E = "texto base"
 
-#Define a letra da alternativa (Variaveis Globais)
+#Define a letra da alternativa (Variáveis Globais)
 letras_alternativas = ["A)", "B)", "C)", "D)", "E)"]
 
 
 #Declaração de Função para aleatorizar alternativas
 def alternativas():
-#Puxa variaveis globais
+#Puxa variáveis globais
     global letras_alternativas
 
 #Variaveis da função
 #repeat define uma letra de "A" até "E" para a questão;
-#correct tem duas utilidades, primeiro a variavel indica a letra da questão
+#correct tem duas utilidades, primeiro a variável indica a letra da questão
 #depois ela de torna a alternativa correta da questão.
 
     repeat = 0
@@ -52,11 +54,12 @@ def alternativas():
     lista_alternativas = [A, B, C, D, E]
     random.shuffle(lista_alternativas)
     for t in lista_alternativas:
+
 #Escreve as alternativas na tela
         print((letras_alternativas[0 + repeat]), t)
         correct[0 + repeat] = t
         repeat = repeat + 1
-#Fim da função, ao mesmo tempo que devolve o resultado de "correct" pra pergunta em questão,
+#Fim da função, ao mesmo tempo que devolve o resultado de "correct" para pergunta em questão,
 #Onde vai ser usado para definir a alternativa certa
     return correct
 
@@ -75,15 +78,17 @@ def resposta_correta():
     teclar("\nResposta Certa, Parabens! Verifique sua contagem atual: ")
     print("Pontos: ", contagem_pontos +1)
     print()
+
 #Declaração de função de efeito de digitação
-def teclar(texto, velocidade=0.000001):
+def teclar(texto, velocidade=0.0000000000000000001):
     for letra in texto:
         print(letra, end='', flush=True)
 
         if letra !=" ":
             som_tecla.play()
-        time.sleep(velocidade + random.uniform(0, 0.03))
+        time.sleep(velocidade + random.uniform(0, 0.000000003))
     print()
+
 #Declaração de perguntas
 def questao1():
 #Enunciado
@@ -99,10 +104,10 @@ def questao1():
     A = "Utilizava linguagens rudimentares, como C e Pascal."
     B = "Utilizava linguagem de maquina, como 0s e 1s."
     C = "Não existia nenhuma linguagem especifica antes do assembly."
-    D = "Os programadores faziam uso de linguagens de alto nivel de abstração."
+    D = "Os programadores faziam uso de linguagens de alto nível de abstração."
     E = "Os computadores não utilizavam a programação de modo tradicional."
 
-#Aleatoriza a ordem das questões, ao mesmo tempo que salva a resposta certa na variavel
+#Aleatoriza a ordem das questões, ao mesmo tempo que salva a resposta certa na variável
     recebe = alternativas()
 
 #Confere qual das alternativas é a resposta certa
@@ -122,7 +127,7 @@ def questao1():
         resposta_certa = "E"
         minusculo = "e"
 
-#Recebe a resposta do usuario e guia caso seja a resposta correta ou incorreta
+#Recebe a resposta do usuário e guia caso seja a resposta correta ou incorreta
     resposta = input("\nSelecione a alternativa correta: ")
     if resposta != resposta_certa and resposta != minusculo:
         resposta_incorreta()
@@ -169,7 +174,7 @@ def questao2():
         resposta_certa = "E"
         minusculo = "e"
 
-#Recebe a resposta do usuario e guia caso seja correta ou incorreta
+#Recebe a resposta do usuário e guia caso seja correta ou incorreta
 
     resposta = input("\nSelecione a alternativa correta: ")
     if resposta != resposta_certa and resposta != minusculo:
@@ -184,7 +189,7 @@ def questao3():
 
 #Enunciado
 
-    teclar("O agrupamento por paradigmas é outra forma de classificar as linguagens de programação.\nUm paradigma agrupa linguagens com caracteristicas semelhantes que surgiram na mesma época.\n")
+    teclar("O agrupamento por paradigmas é outra forma de classificar as linguagens de programação.\nUm paradigma agrupa linguagens com características semelhantes que surgiram na mesma época.\n")
     teclar("Qual das alternativas a seguir demonstram a diferença entre paradigmas imperativos e declarativos?\n")
 
 #Variaveis globais
@@ -194,7 +199,7 @@ def questao3():
 
     A = "Os paradigmas da classe imperativo especificam passo a passo o que deve ser feito para a execução do código, enquanto os de classe declarativa só explicam o que deve ser feito e não como."
     B = "Os paradigmas da classe imperativa utilizam desvios incondicionais (Goto), enquanto os de classe declarativa não o fazem."
-    C = "A grande diferença entre paradigmas imperativos e declarativos se deve ao fato de somente a programação declarativa utilizar variaveis."
+    C = "A grande diferença entre paradigmas imperativos e declarativos se deve ao fato de somente a programação declarativa utilizar variáveis."
     D = "Ia's só podem ser desenvolvidas com paradigmas do tipo imperativo."
     E = "A separação entre linguagens imperativas e declarativas perdeu o sentido desde que a linguagem python foi lançada em 1991."
 
@@ -217,6 +222,7 @@ def questao3():
         minusculo = "e"
 
 #Recebe a resposta do usuário e guia através do caminho correto ou incorreto
+
     resposta = input("\nSelecione a alternativa correta: ")
     if resposta != resposta_certa and resposta != minusculo:
         resposta_incorreta()
@@ -229,7 +235,7 @@ def questao3():
 def questao4():
 #Enunciado
     teclar("Todo código, exceto se estiver em linguagem de maquina, deve ser traduzido antes de ser\nrepassado para a maquina, normalmente resumimos esse processo chamando de compilação.")
-    teclar("\nEsse processo se divide em 4 processos para o tratamento do código, sendo eles: Compilação, montagem, carga e ligação.\n\n")
+    teclar("\nEsse processo se divide em 4 processos para o tratamento do código, sendo eles: Compilação, montagem, carga e ligação.\n")
     teclar("O Que ocorre durante o processo de compilação?\n")
 #Variaveis globais
 
@@ -265,6 +271,7 @@ def questao4():
         minusculo = "e"
 
 #Recebe a resposta do usuário e guia pelo caminho correto/incorreto
+
     resposta = input("\nSelecione a alternativa correta: ")
     if resposta != resposta_certa and resposta != minusculo:
         resposta_incorreta()
@@ -278,7 +285,7 @@ def questao4():
 
 
 #Inicio do programa
-teclar("--- Bem vindo ao Quiz da matéria paradigmas de linguagem em python! ---")
+teclar("\n\n\n\n\n\n\n\n\n\n\n\n\n\n--- Bem vindo ao Quiz da matéria paradigmas de linguagem em python! ---")
 
 while loop != 0:
 #Opções de segmento de código
@@ -303,11 +310,11 @@ while loop != 0:
             loop = 0
 
 
-#Mais informações sobre o programa e sua criação
+#Mais informações sobre o programa e a sua criação
         case 2:
             print()
             teclar("Esse Quiz é o resultado de um trabalho do 2° semestre do curso de ")
-            teclar("Análise e desenvolvimento de sistemas na faculdade estácio, feito ")
+            teclar("Análise e desenvolvimento de sistemas na faculdade Estácio, feito ")
             teclar("Utilizando a linguagem python.")
             print()
             teclar("O Objetivo é utilizar todo o conteúdo disponível no SAVA da matéria ")
@@ -325,3 +332,5 @@ while loop != 0:
 #Entrada não esperada
         case default:
             print("Entrada não identificada, tente novamente.")
+
+

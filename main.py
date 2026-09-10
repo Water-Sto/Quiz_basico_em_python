@@ -2,16 +2,29 @@
 import random
 import pygame
 import sys
+import os
+
+# --------------------------------- Configurações de audio do pygame ---------------------------------------------------
 
 pygame.mixer.init()
-som_tecla = pygame.mixer.Sound("tecla1.wav")
-som_botao = pygame.mixer.Sound("botão.wav")
-sucesso = pygame.mixer.Sound("sucesso.wav")
-fail = pygame.mixer.Sound("fail.wav")
-som_tecla.set_volume(random.uniform(0.15, 0.20))
-fail.set_volume(0.20)
+def caminho_arquivo(nome):
+    if hasattr(sys, '_MEIPASS'):
+        return os.path.join(sys._MEIPASS, nome)
+    return os.path.join(os.path.abspath("."), nome)
 
-# ------------------- CONFIG -----------------------
+som_botao = pygame.mixer.Sound(caminho_arquivo("botao.wav"))
+sucesso = pygame.mixer.Sound(caminho_arquivo("sucesso.wav"))
+fail = pygame.mixer.Sound(caminho_arquivo("fail.wav"))
+Som_final = pygame.mixer.Sound(caminho_arquivo("Som_final.wav"))
+
+pygame.mixer.music.load(caminho_arquivo("Musica_fundo.wav")) #Outra musica é carregada ao se iniciar o quiz
+pygame.mixer.music.set_volume(0.05)
+pygame.mixer.music.play(-1)
+
+fail.set_volume(0.20)
+Som_final.set_volume(0.05)
+
+# ------------------------------ Configurações da tela e da fonte -----------------------------------------------------
 pygame.init()
 LARGURA, ALTURA = 1200, 900
 
@@ -34,6 +47,7 @@ AZUL_CLARO = (0, 191, 255)
 TURQUOISE = (64, 224, 208)
 AZUL_ROYAL = (65, 105, 225)
 LIMA = (0, 255, 0)
+RED = (255, 0, 0)
 
 # ------------------------------------------- Alternativas base ------------------------------------------------------
 opcao_1 = 'texto base'
@@ -43,18 +57,25 @@ opcao_4 = 'texto base'
 enunciado = ['texto base']
 
 opcoes = [opcao_1, opcao_2, opcao_3, opcao_4]
-# ------------------------------------------- Variáveis simples: ------------------------------------------------------
+# ------------------------------------------- Variáveis booleanas ------------------------------------------------------
 
-recompensa = True
-pontuacao = 0
-moedas_obtidas = 0
-ativar_random = True
-total_moedas = 0
-pula_pergunta = False
-contagem = False
-alternativa_correta = 'texto base'
-contagem_perguntas = 1
-erros = 0
+recompensa = True            #| Define se após uma pergunta, o jogador deve receber moedas, perder moedas ou não alterar.
+ativar_random = True         #| Aleatoriza as perguntas enquanto True, não se altera enquanto False
+pula_pergunta = False        #| Quanto True, pula a pergunta atual
+contagem = False             #| Quando True, soma contagem_pergunta + 1
+
+# ------------------------------------------- Variáveis inteiras -------------------------------------------------------
+
+pontuacao = 0                #| Pontuação do jogador
+moedas_obtidas = 0           #| Moedas obtidas na pergunta atual
+total_moedas = 0             #| Total de moedas do jogador
+contagem_perguntas = 1       #| Conta qual a pergunta atual
+erros = 0                    #| Conta os erros do jogador
+
+# ------------------------------------------- Variáveis Strings --------------------------------------------------------
+
+alternativa_correta = 'texto base' #| Salva  a alternativa correta
+marcador = 'texto base'            #| Salva o estado das perguntas para piscar vermelho caso errado e verde caso certo
 
 # ---------------------------------------- Sistema de botões clicáveis -------------------------------------------------
 pos_mouse = pygame.mouse.get_pos()
@@ -90,6 +111,24 @@ class Naobutton:
         texto_renderizar = fonte.render(self.textos, True, PRETO)
         desenha_tela.blit(texto_renderizar, texto_renderizar.get_rect(center=self.rect.center))
 
+# --------------------------------- Sistema de botões verdes e vermelhos ----------------------------------------------
+
+class ButtonRedGreen:
+    def __init__(self, x, y, largura, altura, textos):
+        self.rect = pygame.Rect(x, y, largura, altura)
+        self.textos = textos
+
+    def desenhar(self, desenha_tela):
+
+        if self.textos == alternativa_correta:
+            cor = LIMA
+        else:
+            cor = RED
+        pygame.draw.rect(desenha_tela, cor, self.rect)
+        texto_renderizar = fonte.render(self.textos, True, BRANCO)
+        desenha_tela.blit(texto_renderizar, texto_renderizar.get_rect(center=self.rect.center))
+
+
 # ----------------------------------- aleatorizar alternativas --------------------------------------------------------
 def aleatorizar_alternativas():
 
@@ -121,6 +160,11 @@ def aleatorizar_alternativas():
     botao_alternativa_3.textos = opcoes[2]
     botao_alternativa_4.textos = opcoes[3]
 
+    verificacao_alternativa_1.textos = opcoes[0]
+    verificacao_alternativa_2.textos = opcoes[1]
+    verificacao_alternativa_3.textos = opcoes[2]
+    verificacao_alternativa_4.textos = opcoes[3]
+
     pygame.draw.rect(tela, BRANCO, caixa_alternativa_1)
     pygame.draw.rect(tela, BRANCO, caixa_alternativa_2)
     pygame.draw.rect(tela, BRANCO, caixa_alternativa_3)
@@ -131,12 +175,49 @@ def aleatorizar_alternativas():
     botao_alternativa_3.desenhar(tela)
     botao_alternativa_4.desenhar(tela)
 
+def brilho():
+
+    global texto
+
+    pygame.draw.rect(tela, PRETO, caixa_questao_1)
+    pygame.draw.rect(tela, BRANCO, caixa_questao_1, 3)
+
+    texto = fonte.render(enunciado[0], True, AZUL)
+    tela.blit(texto, (caixa.x, caixa.y - 390))
+    texto = fonte.render(enunciado[1], True, AZUL)
+    tela.blit(texto, (caixa.x, caixa.y - 340))
+    texto = fonte.render(enunciado[2], True, AZUL)
+    tela.blit(texto, (caixa.x, caixa.y - 290))
+    texto = fonte.render(enunciado[3], True, AZUL)
+    tela.blit(texto, (caixa.x, caixa.y - 240))
+    texto = fonte.render(enunciado[4], True, AZUL)
+    tela.blit(texto, (caixa.x, caixa.y - 190))
+    texto = fonte.render(enunciado[5], True, AZUL)
+    tela.blit(texto, (caixa.x, caixa.y - 140))
+
+    pygame.draw.rect(tela, BRANCO, caixa_alternativa_1)
+    pygame.draw.rect(tela, BRANCO, caixa_alternativa_2)
+    pygame.draw.rect(tela, BRANCO, caixa_alternativa_3)
+    pygame.draw.rect(tela, BRANCO, caixa_alternativa_4)
+
+    verificacao_alternativa_1.desenhar(tela)
+    verificacao_alternativa_2.desenhar(tela)
+    verificacao_alternativa_3.desenhar(tela)
+    verificacao_alternativa_4.desenhar(tela)
+    botao_avancar_pergunta.desenhar(tela)
+
+def desenhar_correta():
+    verificacao_alternativa_1.desenhar(tela)
+    verificacao_alternativa_2.desenhar(tela)
+    verificacao_alternativa_3.desenhar(tela)
+    verificacao_alternativa_4.desenhar(tela)
+
 # ---------------------------------------------- Perguntas ------------------------------------------------------------
 
 def pergunta_1(): #Pergunta sobre programação de computadores antes da linguagem assembly
 
     global opcao_1, opcao_2, opcao_3, opcao_4, opcoes
-    global alternativa_correta, enunciado
+    global alternativa_correta, enunciado, moedas_obtidas
 
     enunciado = ["  Hoje em dia, existem diversas linguagens de programação para os mais ",
                  "  variados usos, como c++, python, java e inúmeras outras opções, mas",
@@ -150,6 +231,7 @@ def pergunta_1(): #Pergunta sobre programação de computadores antes da linguag
     opcao_3 = 'linguagens com alto nível de abstração.'
     opcao_4 = 'não existia nenhuma linguagem especifica.'
 
+    moedas_obtidas = 100
     opcoes = [opcao_1, opcao_2, opcao_3, opcao_4]
     alternativa_correta = 'linguagem de maquina, como 0s e 1s.'
     aleatorizar_alternativas()
@@ -166,7 +248,7 @@ def pergunta_1(): #Pergunta sobre programação de computadores antes da linguag
 def pergunta_2(): #pergunta sobre critérios de uma linguagem de programação
 
     global opcao_1, opcao_2, opcao_3, opcao_4, opcoes
-    global alternativa_correta, enunciado
+    global alternativa_correta, enunciado, moedas_obtidas
 
     enunciado = ["  Um dos critérios mais importantes para avaliar a",
                  "  qualidade de uma linguagem de programação é a",
@@ -180,6 +262,7 @@ def pergunta_2(): #pergunta sobre critérios de uma linguagem de programação
     opcao_3 = 'Instruções de controle, como Goto.'
     opcao_4 = 'O custo atrelado a linguagem de programação'
 
+    moedas_obtidas = 50
     alternativa_correta = 'Instruções de controle, como Goto.'
     aleatorizar_alternativas()
     botao_mostrar_moedas.desenhar(tela)
@@ -195,7 +278,7 @@ def pergunta_2(): #pergunta sobre critérios de uma linguagem de programação
 def pergunta_3(): #pergunta sobre linguagens imperativas e declarativas
 
     global opcao_1, opcao_2, opcao_3, opcao_4, opcoes
-    global alternativa_correta, enunciado
+    global alternativa_correta, enunciado, moedas_obtidas
 
     enunciado = ["  O agrupamento por paradigmas é outra forma de",
                  "  classificar as linguagens de programação,",
@@ -214,6 +297,8 @@ def pergunta_3(): #pergunta sobre linguagens imperativas e declarativas
     botao_mostrar_moedas.desenhar(tela)
     pygame.draw.rect(tela, BRANCO, caixa_moedas, 5)
 
+    moedas_obtidas = 100
+
     if total_moedas >= 100:
         botao_pular_ativado.desenhar(tela)
         pygame.draw.rect(tela, BRANCO, caixa_pular, 5)
@@ -224,7 +309,7 @@ def pergunta_3(): #pergunta sobre linguagens imperativas e declarativas
 def pergunta_4(): #pergunta sobre tipos de dados retornados pelo input()
 
     global opcao_1, opcao_2, opcao_3, opcao_4, opcoes
-    global alternativa_correta, enunciado
+    global alternativa_correta, enunciado, moedas_obtidas
 
     enunciado = ["  como existem diversas linguagem de programação, é",
                  "  comum que também existam diversos tipos de entrada,",
@@ -242,6 +327,7 @@ def pergunta_4(): #pergunta sobre tipos de dados retornados pelo input()
     aleatorizar_alternativas()
     botao_mostrar_moedas.desenhar(tela)
     pygame.draw.rect(tela, BRANCO, caixa_moedas, 5)
+    moedas_obtidas = 30
 
     if total_moedas >= 100:
         botao_pular_ativado.desenhar(tela)
@@ -252,7 +338,7 @@ def pergunta_4(): #pergunta sobre tipos de dados retornados pelo input()
 
 def pergunta_5(): #pergunta sobre a forma correta de declarar funções em python
     global opcao_1, opcao_2, opcao_3, opcao_4, opcoes
-    global alternativa_correta, enunciado
+    global alternativa_correta, enunciado, moedas_obtidas
 
     enunciado = ["  Funções são extremamente uteis na programação.",
                  "  Não funções matemáticas, mas funções lógicas, ",
@@ -270,6 +356,7 @@ def pergunta_5(): #pergunta sobre a forma correta de declarar funções em pytho
     aleatorizar_alternativas()
     botao_mostrar_moedas.desenhar(tela)
     pygame.draw.rect(tela, BRANCO, caixa_moedas, 5)
+    moedas_obtidas = 30
 
     if total_moedas >= 100:
         botao_pular_ativado.desenhar(tela)
@@ -280,7 +367,7 @@ def pergunta_5(): #pergunta sobre a forma correta de declarar funções em pytho
 
 def pergunta_6(): #pergunta sobre como declarar uma lista em python
     global opcao_1, opcao_2, opcao_3, opcao_4, opcoes
-    global alternativa_correta, enunciado
+    global alternativa_correta, enunciado, moedas_obtidas
 
     enunciado = ["  Com python, assim como com diversas outras linguagens",
                  "  você pode isolar elementos dentro de uma lista, ",
@@ -299,6 +386,7 @@ def pergunta_6(): #pergunta sobre como declarar uma lista em python
     botao_mostrar_moedas.desenhar(tela)
     pygame.draw.rect(tela, BRANCO, caixa_moedas, 5)
 
+    moedas_obtidas = 30
     if total_moedas >= 100:
         botao_pular_ativado.desenhar(tela)
         pygame.draw.rect(tela, BRANCO, caixa_pular, 5)
@@ -308,7 +396,7 @@ def pergunta_6(): #pergunta sobre como declarar uma lista em python
 
 def pergunta_7(): #Pergunta sobre adicionar bibliotecas em python
     global opcao_1, opcao_2, opcao_3, opcao_4, opcoes
-    global alternativa_correta, enunciado
+    global alternativa_correta, enunciado, moedas_obtidas
 
     enunciado = ["  Bibliotecas são conjuntos de códigos, funções, ",
                  "  classes e recursos pré escritos que desenvolvedores",
@@ -327,6 +415,7 @@ def pergunta_7(): #Pergunta sobre adicionar bibliotecas em python
     botao_mostrar_moedas.desenhar(tela)
     pygame.draw.rect(tela, BRANCO, caixa_moedas, 5)
 
+    moedas_obtidas = 30
     if total_moedas >= 100:
         botao_pular_ativado.desenhar(tela)
         pygame.draw.rect(tela, BRANCO, caixa_pular, 5)
@@ -336,7 +425,7 @@ def pergunta_7(): #Pergunta sobre adicionar bibliotecas em python
 
 def pergunta_8(): #pergunta sobre manipulação de listas e tratamento de texto
     global opcao_1, opcao_2, opcao_3, opcao_4, opcoes
-    global alternativa_correta, enunciado
+    global alternativa_correta, enunciado, moedas_obtidas
 
     enunciado = ["  Entender listas e saber como manipula-las",
                  "  é um requisito importante para programadores,",
@@ -355,6 +444,7 @@ def pergunta_8(): #pergunta sobre manipulação de listas e tratamento de texto
     botao_mostrar_moedas.desenhar(tela)
     pygame.draw.rect(tela, BRANCO, caixa_moedas, 5)
 
+    moedas_obtidas = 50
     if total_moedas >= 100:
         botao_pular_ativado.desenhar(tela)
         pygame.draw.rect(tela, BRANCO, caixa_pular, 5)
@@ -364,7 +454,7 @@ def pergunta_8(): #pergunta sobre manipulação de listas e tratamento de texto
 
 def pergunta_9(): #pergunta sobre Conversão de string para inteiro
     global opcao_1, opcao_2, opcao_3, opcao_4, opcoes
-    global alternativa_correta, enunciado
+    global alternativa_correta, enunciado, moedas_obtidas
 
     enunciado = ["  Existem diversas formas de se armazenar dados",
                  "  em variáveis e, para cada uma delas, aquele dado",
@@ -383,6 +473,7 @@ def pergunta_9(): #pergunta sobre Conversão de string para inteiro
     botao_mostrar_moedas.desenhar(tela)
     pygame.draw.rect(tela, BRANCO, caixa_moedas, 5)
 
+    moedas_obtidas = 30
     if total_moedas >= 100:
         botao_pular_ativado.desenhar(tela)
         pygame.draw.rect(tela, BRANCO, caixa_pular, 5)
@@ -392,7 +483,7 @@ def pergunta_9(): #pergunta sobre Conversão de string para inteiro
 
 def pergunta_10(): #pergunta sobre verificar valores em uma lista
     global opcao_1, opcao_2, opcao_3, opcao_4, opcoes
-    global alternativa_correta, enunciado
+    global alternativa_correta, enunciado, moedas_obtidas
 
     enunciado = ["  Gerenciamento de listas é essencial ",
                  "  para programadores experientes, adicionando",
@@ -411,6 +502,7 @@ def pergunta_10(): #pergunta sobre verificar valores em uma lista
     botao_mostrar_moedas.desenhar(tela)
     pygame.draw.rect(tela, BRANCO, caixa_moedas, 5)
 
+    moedas_obtidas = 50
     if total_moedas >= 100:
         botao_pular_ativado.desenhar(tela)
         pygame.draw.rect(tela, BRANCO, caixa_pular, 5)
@@ -420,7 +512,7 @@ def pergunta_10(): #pergunta sobre verificar valores em uma lista
 
 def pergunta_11(): #pergunta sobre comentários
     global opcao_1, opcao_2, opcao_3, opcao_4, opcoes
-    global alternativa_correta, enunciado
+    global alternativa_correta, enunciado, moedas_obtidas
 
     enunciado = ["  Comentários são uteis quando se trabalha em grupo.",
                  "  Utilizando eles, programadores e analistas de dados",
@@ -439,6 +531,7 @@ def pergunta_11(): #pergunta sobre comentários
     botao_mostrar_moedas.desenhar(tela)
     pygame.draw.rect(tela, BRANCO, caixa_moedas, 5)
 
+    moedas_obtidas = 20
     if total_moedas >= 100:
         botao_pular_ativado.desenhar(tela)
         pygame.draw.rect(tela, BRANCO, caixa_pular, 5)
@@ -448,7 +541,7 @@ def pergunta_11(): #pergunta sobre comentários
 
 def pergunta_12(): # pergunta sobre o trecho de código "type"
     global opcao_1, opcao_2, opcao_3, opcao_4, opcoes
-    global alternativa_correta, enunciado
+    global alternativa_correta, enunciado, moedas_obtidas
 
     enunciado = ["  Em python, números podem ser interpretados como texto",
                  "  erroneamente, causando confusão no fluxo do programa.",
@@ -467,6 +560,7 @@ def pergunta_12(): # pergunta sobre o trecho de código "type"
     botao_mostrar_moedas.desenhar(tela)
     pygame.draw.rect(tela, BRANCO, caixa_moedas, 5)
 
+    moedas_obtidas = 50
     if total_moedas >= 100:
         botao_pular_ativado.desenhar(tela)
         pygame.draw.rect(tela, BRANCO, caixa_pular, 5)
@@ -476,7 +570,7 @@ def pergunta_12(): # pergunta sobre o trecho de código "type"
 
 def pergunta_13(): #pergunta sobre estruturas de repetição:
     global opcao_1, opcao_2, opcao_3, opcao_4, opcoes
-    global alternativa_correta, enunciado
+    global alternativa_correta, enunciado, moedas_obtidas
 
     enunciado = ["  Estruturas de repetição podem gerar confusão pela ",
                  "  forma como são interpretadas pelo programa em cada",
@@ -495,6 +589,7 @@ def pergunta_13(): #pergunta sobre estruturas de repetição:
     botao_mostrar_moedas.desenhar(tela)
     pygame.draw.rect(tela, BRANCO, caixa_moedas, 5)
 
+    moedas_obtidas = 30
     if total_moedas >= 100:
         botao_pular_ativado.desenhar(tela)
         pygame.draw.rect(tela, BRANCO, caixa_pular, 5)
@@ -502,9 +597,9 @@ def pergunta_13(): #pergunta sobre estruturas de repetição:
         botao_pular_desativado.desenhar(tela)
         pygame.draw.rect(tela, BRANCO, caixa_pular, 5)
 
-def pergunta_14():
+def pergunta_14(): #pergunta sobre função Range
     global opcao_1, opcao_2, opcao_3, opcao_4, opcoes
-    global alternativa_correta, enunciado
+    global alternativa_correta, enunciado, moedas_obtidas
 
     enunciado = ["  Saber como utilizar as ferramentas disponíveis",
                  "  do python é extremamente importante para dominar",
@@ -523,6 +618,7 @@ def pergunta_14():
     botao_mostrar_moedas.desenhar(tela)
     pygame.draw.rect(tela, BRANCO, caixa_moedas, 5)
 
+    moedas_obtidas = 50
     if total_moedas >= 100:
         botao_pular_ativado.desenhar(tela)
         pygame.draw.rect(tela, BRANCO, caixa_pular, 5)
@@ -532,7 +628,7 @@ def pergunta_14():
 
 def pergunta_15():
     global opcao_1, opcao_2, opcao_3, opcao_4, opcoes
-    global alternativa_correta, enunciado
+    global alternativa_correta, enunciado, moedas_obtidas
 
     enunciado = ["  Após criar e formatar uma lista em python, pode ser",
                  "  uma tarefa desafiadora editar os elementos dentro dela.",
@@ -551,6 +647,7 @@ def pergunta_15():
     botao_mostrar_moedas.desenhar(tela)
     pygame.draw.rect(tela, BRANCO, caixa_moedas, 5)
 
+    moedas_obtidas = 50
     if total_moedas >= 100:
         botao_pular_ativado.desenhar(tela)
         pygame.draw.rect(tela, BRANCO, caixa_pular, 5)
@@ -560,7 +657,7 @@ def pergunta_15():
 
 def pergunta_16(): #pergunta sobre o operador %
     global opcao_1, opcao_2, opcao_3, opcao_4, opcoes
-    global alternativa_correta, enunciado
+    global alternativa_correta, enunciado, moedas_obtidas
 
     enunciado = ["  Os operadores da aritmética padrão podem mudar de função",
                  "  de acordo com a linguagem de programação, sendo necessário",
@@ -579,6 +676,7 @@ def pergunta_16(): #pergunta sobre o operador %
     botao_mostrar_moedas.desenhar(tela)
     pygame.draw.rect(tela, BRANCO, caixa_moedas, 5)
 
+    moedas_obtidas = 20
     if total_moedas >= 100:
         botao_pular_ativado.desenhar(tela)
         pygame.draw.rect(tela, BRANCO, caixa_pular, 5)
@@ -588,7 +686,7 @@ def pergunta_16(): #pergunta sobre o operador %
 
 def pergunta_17(): #pergunta sobre o código "Len"
     global opcao_1, opcao_2, opcao_3, opcao_4, opcoes
-    global alternativa_correta, enunciado
+    global alternativa_correta, enunciado, moedas_obtidas
 
     enunciado = ["  O código 'len' em python tem como função retornar",
                  "  quantos caracteres são ocupados por aquele bloco",
@@ -607,6 +705,7 @@ def pergunta_17(): #pergunta sobre o código "Len"
     botao_mostrar_moedas.desenhar(tela)
     pygame.draw.rect(tela, BRANCO, caixa_moedas, 5)
 
+    moedas_obtidas = 100
     if total_moedas >= 100:
         botao_pular_ativado.desenhar(tela)
         pygame.draw.rect(tela, BRANCO, caixa_pular, 5)
@@ -616,7 +715,7 @@ def pergunta_17(): #pergunta sobre o código "Len"
 
 def pergunta_18(): #pergunta sobre impressão na tela
     global opcao_1, opcao_2, opcao_3, opcao_4, opcoes
-    global alternativa_correta, enunciado
+    global alternativa_correta, enunciado, moedas_obtidas
 
     enunciado = ["  Diferentes comandos para a entrada de dados são",
                  "  utilizados, variando juntamente com as linguagens",
@@ -635,6 +734,7 @@ def pergunta_18(): #pergunta sobre impressão na tela
     botao_mostrar_moedas.desenhar(tela)
     pygame.draw.rect(tela, BRANCO, caixa_moedas, 5)
 
+    moedas_obtidas = 30
     if total_moedas >= 100:
         botao_pular_ativado.desenhar(tela)
         pygame.draw.rect(tela, BRANCO, caixa_pular, 5)
@@ -644,7 +744,7 @@ def pergunta_18(): #pergunta sobre impressão na tela
 
 def pergunta_19(): # pergunta sobre operadores lógicos
     global opcao_1, opcao_2, opcao_3, opcao_4, opcoes
-    global alternativa_correta, enunciado
+    global alternativa_correta, enunciado, moedas_obtidas
 
     enunciado = ["  Na linguagem python, existem diferenças que surgem quando",
                  "  se utilizam dois operadores em sequencia, por exemplo:",
@@ -663,6 +763,7 @@ def pergunta_19(): # pergunta sobre operadores lógicos
     botao_mostrar_moedas.desenhar(tela)
     pygame.draw.rect(tela, BRANCO, caixa_moedas, 5)
 
+    moedas_obtidas = 50
     if total_moedas >= 100:
         botao_pular_ativado.desenhar(tela)
         pygame.draw.rect(tela, BRANCO, caixa_pular, 5)
@@ -672,7 +773,7 @@ def pergunta_19(): # pergunta sobre operadores lógicos
 
 def pergunta_20():#pergunta sobre declaração de variáveis
     global opcao_1, opcao_2, opcao_3, opcao_4, opcoes
-    global alternativa_correta, enunciado
+    global alternativa_correta, enunciado, moedas_obtidas
 
     enunciado = ["  O python é uma linguagem que não necessita da declaração",
                  "  de variáveis no começo do programa, possibilitando a declaração",
@@ -691,6 +792,7 @@ def pergunta_20():#pergunta sobre declaração de variáveis
     botao_mostrar_moedas.desenhar(tela)
     pygame.draw.rect(tela, BRANCO, caixa_moedas, 5)
 
+    moedas_obtidas = 30
     if total_moedas >= 100:
         botao_pular_ativado.desenhar(tela)
         pygame.draw.rect(tela, BRANCO, caixa_pular, 5)
@@ -701,31 +803,35 @@ def pergunta_20():#pergunta sobre declaração de variáveis
 
 def resposta():
 
-    global estado, ativar_random
+    global estado, ativar_random, marcador
 
     if botao_alternativa_1.clicado(pos_mouse):
         if botao_alternativa_1.textos == alternativa_correta:
             som_botao.play()
             sucesso.play()
-            estado = "certa_resposta"
+            estado = "brilho"
+            marcador = 'certa_resposta'
             ativar_random = True
     if botao_alternativa_2.clicado(pos_mouse):
         if botao_alternativa_2.textos == alternativa_correta:
             som_botao.play()
             sucesso.play()
-            estado = "certa_resposta"
+            estado = "brilho"
+            marcador = 'certa_resposta'
             ativar_random = True
     if botao_alternativa_3.clicado(pos_mouse):
         if botao_alternativa_3.textos == alternativa_correta:
             som_botao.play()
             sucesso.play()
-            estado = "certa_resposta"
+            estado = "brilho"
+            marcador = 'certa_resposta'
             ativar_random = True
     if botao_alternativa_4.clicado(pos_mouse):
         if botao_alternativa_4.textos == alternativa_correta:
             som_botao.play()
             sucesso.play()
-            estado = "certa_resposta"
+            estado = "brilho"
+            marcador = 'certa_resposta'
             ativar_random = True
     if botao_alternativa_1.clicado(
             pos_mouse) and botao_alternativa_1.textos != alternativa_correta or botao_alternativa_2.clicado(
@@ -734,7 +840,8 @@ def resposta():
         pos_mouse) and botao_alternativa_4.textos != alternativa_correta:
         som_botao.play()
         fail.play()
-        estado = "resposta_errada"
+        estado = "brilho"
+        marcador = 'resposta_errada'
         ativar_random = True
     if botao_pular_ativado.clicado(pos_mouse) and total_moedas >= 100:
         som_botao.play()
@@ -782,6 +889,10 @@ botao_avancar = Button(porcentagem_horizontal * 70, porcentagem_vertical * 90,
 
 botao_tela_anterior = Button(porcentagem_horizontal * 37, porcentagem_vertical * 90,
                       porcentagem_horizontal * 25, porcentagem_vertical * 5, "Anterior")
+# ------------------------- Botão avançar da tela pós-pergunta -----------------------------------------------------
+
+botao_avancar_pergunta = Button(porcentagem_horizontal * 37, porcentagem_vertical * 90,
+                      porcentagem_horizontal * 25, porcentagem_vertical * 5, "Avançar")
 
 # ------------------------- Botões que definem as alternativas em qualquer estado ----------------------------------
 
@@ -789,6 +900,13 @@ botao_alternativa_1 = Button(porcentagem_horizontal * 5, porcentagem_vertical * 
 botao_alternativa_2 = Button(porcentagem_horizontal * 5, porcentagem_vertical * 60, porcentagem_horizontal * 90, porcentagem_vertical * 6, "")
 botao_alternativa_3 = Button(porcentagem_horizontal * 5, porcentagem_vertical * 70, porcentagem_horizontal * 90, porcentagem_vertical * 6, "")
 botao_alternativa_4 = Button(porcentagem_horizontal * 5, porcentagem_vertical * 80, porcentagem_horizontal * 90, porcentagem_vertical * 6, "")
+
+# ------------------------- Botões que mostram qual a alternativa correta ----------------------------------------------
+
+verificacao_alternativa_1 = ButtonRedGreen(porcentagem_horizontal * 5, porcentagem_vertical * 50, porcentagem_horizontal * 90, porcentagem_vertical * 6, "")
+verificacao_alternativa_2 = ButtonRedGreen(porcentagem_horizontal * 5, porcentagem_vertical * 60, porcentagem_horizontal * 90, porcentagem_vertical * 6, "")
+verificacao_alternativa_3 = ButtonRedGreen(porcentagem_horizontal * 5, porcentagem_vertical * 70, porcentagem_horizontal * 90, porcentagem_vertical * 6, "")
+verificacao_alternativa_4 = ButtonRedGreen(porcentagem_horizontal * 5, porcentagem_vertical * 80, porcentagem_horizontal * 90, porcentagem_vertical * 6, "")
 
 # ------------------------- Caixas que envolvem os botões acima --------------------------------------------------------
 
@@ -855,6 +973,8 @@ loop = 1
 while loop != 0:
     tela.fill(PRETO)
 
+# ------------------------------ Todos os eventos possíveis em cada estado -------------------------------------------
+
     for evento in pygame.event.get():
         if evento.type == pygame.QUIT:
             loop = 0
@@ -863,9 +983,8 @@ while loop != 0:
         if evento.type == pygame.MOUSEBUTTONDOWN:
             pos_mouse = pygame.mouse.get_pos()
 
+#----------------------------------- Eventos possíveis no estado Menu --------------------------------------------------
 
-
-#-------------------------------------- MENU -----------------------------------------------
         if estado == "menu":
             if botao_informacao.clicado(pos_mouse):
                 som_botao.play()
@@ -876,20 +995,34 @@ while loop != 0:
                 sys.exit()
 
             if botao_iniciar.clicado(pos_mouse):
+                pygame.mixer.music.load(caminho_arquivo("Musica_quiz.wav"))
+                pygame.mixer.music.play(-1)
                 if estado_anterior == "numero_questao":
                     som_botao.play()
                     estado = 'numero_questao'
                 if estado_anterior != "numero_questao":
                     som_botao.play()
                     estado = 'tutorial'
-#----------------------------------- Tutorial --------------------------------------------
+
+#----------------------------------- Eventos possíveis no estado Tutorial ----------------------------------------------
 
         elif estado == 'tutorial':
             if botao_avancar.clicado(pos_mouse):
                 som_botao.play()
                 estado = perguntas[indice_perguntas]
 
-#-------------------------------------- INFO ------------------------------------------------
+# ---------------------------------- Eventos possíveis no estado Brilho ------------------------------------------------
+
+        elif estado == 'brilho':
+            if botao_avancar_pergunta.clicado(pos_mouse):
+                som_botao.play()
+                if marcador == 'certa_resposta':
+                    estado = 'certa_resposta'
+
+                if marcador == 'resposta_errada':
+                    estado = 'resposta_errada'
+
+#------------------------------------ Eventos possíveis no estado Info -------------------------------------------------
 
         elif estado == "info":
             if botao_voltar.clicado(pos_mouse):
@@ -898,7 +1031,9 @@ while loop != 0:
             if botao_avancar.clicado(pos_mouse):
                 som_botao.play()
                 estado = "info2"
-#------------------------------------- INFO 2 -----------------------------------------------
+
+#------------------------------------- Subdivisão do estado info -------------------------------------------------------
+
         elif estado == "info2":
             if botao_voltar.clicado(pos_mouse):
                 som_botao.play()
@@ -906,7 +1041,9 @@ while loop != 0:
             if botao_tela_anterior.clicado(pos_mouse):
                 som_botao.play()
                 estado = "info"
-#------------------------------------- SAIR ------------------------------------------------
+
+#------------------------------------- Eventos possíveis no estado SAIR ------------------------------------------------
+
         elif estado == "sair":
             if estado_anterior == "numero_questao":
                 if botao_sim.clicado(pos_mouse):
@@ -925,7 +1062,7 @@ while loop != 0:
                     som_botao.play()
                     estado = "menu"
 
-# ------------------------------------- Final ---------------------------------------------------------
+# ------------------------------------- Eventos possíveis no estado Final ----------------------------------------------
 
         elif estado == "final":
             if botao_avancar.clicado(pos_mouse):
@@ -939,7 +1076,7 @@ while loop != 0:
                 random.shuffle(perguntas)
                 estado = "menu"
 
-#------------------------------------ PULAR ------------------------------------------------
+#------------------------------------ Eventos possíveis no estado Pular ------------------------------------------------
 
         elif estado == 'pular':
             if botao_sim.clicado(pos_mouse):
@@ -954,7 +1091,7 @@ while loop != 0:
                 som_botao.play()
                 estado = perguntas[indice_perguntas]
 
-#-------------------------------- TRANSIÇÃO PÓS PULAR --------------------------------------
+#---------------------------------- Eventos possíveis no estado PÓS-PULAR ----------------------------------------------
 
         elif estado == 'status_pular':
             if botao_avancar.clicado(pos_mouse):
@@ -962,21 +1099,26 @@ while loop != 0:
                 contagem = True
                 estado = "numero_questao"
 
-#------------------------------ RESPOSTA CERTA ---------------------------------------------
+#------------------------------ Eventos possíveis no estado Resposta Certa ---------------------------------------------
+
         elif estado == "certa_resposta":
             if botao_avancar.clicado(pos_mouse):
                 contagem = True
                 som_botao.play()
                 estado = "numero_questao"
                 recompensa = True
-#------------------------------ RESPOSTA ERRADA ---------------------------------------------
+
+#------------------------------ Eventos possíveis no estado Resposta Errada --------------------------------------------
+
         elif estado == "resposta_errada":
             if botao_avancar.clicado(pos_mouse):
                 contagem = True
                 som_botao.play()
                 estado = "numero_questao"
                 recompensa = True
-#-------------------------------TRANSIÇÃO QUESTÕES ------------------------------------------
+
+#------------------------------- Eventos possíveis no estado numero_questão --------------------------------------------
+
         elif estado == "numero_questao":
             if botao_ok.clicado(pos_mouse):
                 som_botao.play()
@@ -993,7 +1135,9 @@ while loop != 0:
                 som_botao.play()
                 estado_anterior = "numero_questao"
                 estado = "sair"
-#------------------------------------------ QUIZ PERGUNTAS -----------------------------------------------------------
+
+#----------------------------------- Eventos possíveis durante as Perguntas --------------------------------------------
+
         elif estado == "quiz_pergunta_1":
             resposta()
 
@@ -1053,7 +1197,8 @@ while loop != 0:
 
         elif estado == "quiz_pergunta_20":
             resposta()
-#-------------------------------------------- DESENHO ---------------------------------------------------------------
+
+#-------------------------------- Parte do código que realmente aparece em tela ----------------------------------------
 
     if estado == "menu":
 
@@ -1131,8 +1276,8 @@ while loop != 0:
         texto = fonte.render("Você esta começando agora um quiz de python sobre python!", True, BRANCO)
         tela.blit(texto, (porcentagem_horizontal * 15, porcentagem_vertical * 10))
 
-        texto = fonte.render("A cada questão respondida corretamente, você ganhará 1 ponto e 50 moedas.", True, BRANCO)
-        tela.blit(texto, (porcentagem_horizontal * 5, porcentagem_vertical * 15))
+        texto = fonte.render("A cada questão respondida corretamente, você ganhará 1 ponto e algumas moedas.", True, BRANCO)
+        tela.blit(texto, (porcentagem_horizontal * 2.5, porcentagem_vertical * 15))
 
         texto = fonte.render("Sempre que tiver 100 ou mais moedas, poderá optar por pular ",True, BRANCO)
         tela.blit(texto, (porcentagem_horizontal * 15, porcentagem_vertical * 20))
@@ -1144,6 +1289,11 @@ while loop != 0:
         tela.blit(texto, (porcentagem_horizontal * 5, porcentagem_vertical * 30))
 
         botao_avancar.desenhar(tela)
+# ------------------------------------ Estado Brilho Questões ----------------------------------------------------
+    elif estado == 'brilho':
+
+        brilho()
+
 # ----------------------------------------- Estado "Pular" -------------------------------------------------------
 
     elif estado == 'pular':
@@ -1176,7 +1326,7 @@ while loop != 0:
 
         botao_avancar.desenhar(tela)
 
-# ------------------------------ Respostas certas e erradas ------------------------------------------------------
+# ---------------------------------------- Respostas Certas  -----------------------------------------------------------
 
     elif estado == "certa_resposta":
         texto = fonte.render("Resposta certa, parabéns!", True, BRANCO)
@@ -1185,7 +1335,6 @@ while loop != 0:
         pygame.draw.rect(tela, PRETO, caixa_info)
         pygame.draw.rect(tela, BRANCO, caixa_info, 3)
 
-        moedas_obtidas = 50
         if recompensa:
 
             pontuacao = pontuacao + 1
@@ -1207,6 +1356,8 @@ while loop != 0:
 
         botao_avancar.desenhar(tela)
 
+# ---------------------------------------- Respostas Erradas  ----------------------------------------------------------
+
     elif estado == "resposta_errada":
         texto = fonte.render("Resposta errada, mais sorte na próxima!", True, BRANCO)
         tela.blit(texto, (porcentagem_horizontal * 25, porcentagem_vertical * 10))
@@ -1226,6 +1377,7 @@ while loop != 0:
 
         if recompensa:
 
+            moedas_obtidas = 50
             erros +=1
             total_moedas = total_moedas - moedas_obtidas
             recompensa = False
@@ -1323,6 +1475,7 @@ while loop != 0:
 
     elif estado == "final":
 
+        Som_final.play()
         if pontuacao < 20:
             texto = fonte.render("Parabéns, você concluiu o quiz!",True, BRANCO)
             tela.blit(texto, (porcentagem_horizontal * 30, porcentagem_vertical * 10))
@@ -1359,5 +1512,6 @@ while loop != 0:
 
     pygame.display.flip()
 pygame.quit()
+
 
 
